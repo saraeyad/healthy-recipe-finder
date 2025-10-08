@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Discover healthy recipes that are quick, affordable, and delicious."
+    />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/favicon-32x32.png"
+    />
+
+    <title>Frontend Mentor | Recipe finder website</title>
+    <link rel="stylesheet" href="./output.css" />
+  </head>
+  <body>
+    <!-- ================= HEADER ================= -->
+    <header id="header"></header>
+
+    <main class="pt-[72px] md:pt-[93px]">
+      <!-- ================= HERO ================= -->
+      <section class="my-12 md:mt-16 md:mb-12 lg:mt-20 lg:mb-16">
+        <div class="text-left lg:text-center max-w-3xl lg:mx-auto">
+          <h1 class="text-preset-2 mb-3">
+            Explore our simple, healthy recipes
+          </h1>
+          <p>
+            Discover eight quick, whole-food dishes that fit real-life schedules
+            and taste amazing. Use the search bar to find a recipe by name or
+            ingredient, or simply scroll the list and let something delicious
+            catch your eye.
+          </p>
+        </div>
+      </section>
+
+      <!-- ================= RECIPES GRID ================= -->
+      <section class="lg:pb-24">
+        <!-- Filters + Search -->
+        <div
+          class="mb-6 flex flex-col md:flex-row items-stretch justify-center gap-3"
+        >
+          <!-- Max Prep Time Dropdown -->
+          <div class="relative">
+            <button
+              id="prepBtn"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="prepDropdown"
+              class="text-preset-7 px-4 py-2.5 flex items-center justify-center gap-2 bg-white border border-neutral-200 rounded-[10px] text-neutral-900 hover:border-neutral-900 transition-[border] ease-in duration-150 w-full lg:w-auto"
+            >
+              <span id="prepBtnText">Max Prep Time</span>
+              <img src="./assets/images/icon-chevron-down.svg" alt="" />
+            </button>
+            <div
+              id="prepDropdown"
+              role="listbox"
+              aria-labelledby="prepBtn"
+              class="hidden absolute bg-white border border-neutral-200 rounded-lg shadow-lg w-60 p-2 mt-2 z-10"
+            >
+              <label role="option">
+                <input type="radio" name="prep" value="0" /> 0 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="prep" value="5" /> 5 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="prep" value="10" /> 10 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="prep" value="" /> Clear
+              </label>
+            </div>
+          </div>
+
+          <!-- Max Cook Time Dropdown -->
+          <div class="relative">
+            <button
+              id="cookBtn"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="cookDropdown"
+              class="text-preset-7 px-4 py-2.5 flex items-center justify-center gap-2 bg-white border border-neutral-200 rounded-[10px] text-neutral-900 hover:border-neutral-900 transition-[border] ease-in duration-150 w-full lg:w-auto"
+            >
+              <span id="cookBtnText">Max Cook Time</span>
+              <img src="./assets/images/icon-chevron-down.svg" alt="" />
+            </button>
+            <div
+              id="cookDropdown"
+              role="listbox"
+              aria-labelledby="cookBtn"
+              class="hidden absolute bg-white border border-neutral-200 rounded-lg shadow-lg w-60 p-2 mt-2 z-10"
+            >
+              <label role="option">
+                <input type="radio" name="cook" value="0" />
+                0 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="cook" value="5" /> 5 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="cook" value="10" /> 10 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="cook" value="15" /> 15 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="cook" value="20" /> 20 minutes
+              </label>
+              <label role="option">
+                <input type="radio" name="cook" value="" /> Clear
+              </label>
+            </div>
+          </div>
+
+          <!-- Search -->
+          <div
+            class="flex-1 lg:max-w-sm lg:ml-auto flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 rounded-[10px] hover:border-neutral-900 transition-[border] ease-in duration-150"
+          >
+            <img src="./assets/images/icon-search.svg" alt="" />
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search by name or ingredient..."
+              class="w-full focus:outline-none text-preset-7"
+            />
+          </div>
+        </div>
+
+        <div
+          id="recipesGrid"
+          aria-live="polite"
+          class="grid gap-8 lg:grid-cols-2 xl:grid-cols-3"
+        >
+          <!-- For loading recipes -->
+          <p class="col-span-full text-center text-neutral-600" id="loadingMsg">
+            Loading recipes...
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer
+      id="footer"
+      class="lg:border-t-[1px] lg:border-t-neutral-200"
+    ></footer>
+
+    <!-- ================= SCRIPT ================= -->
+    <script type="module">
+      import { initPage } from "./js/components.js";
+      import { initMenu } from "./js/main.js";
+
+      initPage("recipes");
+      initMenu();
+    </script>
+    <script type="module" src="./js/recipes.js"></script>
+  </body>
+</html>
