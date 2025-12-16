@@ -1,47 +1,87 @@
-# Frontend Mentor - Recipe finder website solution
+# Project Structure
 
-This is a solution to the [Recipe finder website challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/recipe-finder-website--Ui-TZTPxN).
+This document outlines the organized structure of the Recipe Finder React application.
 
-## Overview
+## Directory Structure
 
-### The challenge
+```
+src/
+├── assets/              # Static assets (images)
+│   └── images/
+├── components/          # Reusable UI components
+│   ├── Breadcrumb.jsx
+│   ├── CTA.jsx
+│   ├── ErrorMessage.jsx
+│   ├── FilterDropdown.jsx
+│   ├── Footer.jsx
+│   ├── Header.jsx
+│   ├── LoadingState.jsx
+│   ├── Navigation.jsx
+│   ├── RecipeCard.jsx
+│   ├── RecipeFilters.jsx
+│   ├── RecipeGrid.jsx
+│   ├── RecipeInfo.jsx
+│   ├── RecipeIngredients.jsx
+│   └── RecipeInstructions.jsx
+├── constants/           # Application constants
+│   ├── filterOptions.js
+│   └── navigation.js
+├── hooks/               # Custom React hooks
+│   ├── useClickOutside.js
+│   ├── useMenu.js
+│   ├── useRecipeFilters.js
+│   └── useRecipes.js
+├── pages/               # Page components
+│   ├── About.jsx
+│   ├── Home.jsx
+│   ├── RecipeDetail.jsx
+│   └── Recipes.jsx
+├── services/            # API/data services
+│   └── recipeService.js
+├── utils/               # Utility functions
+│   └── recipeFilters.js
+├── App.jsx              # Main app component
+├── main.jsx             # Entry point
+└── index.css            # Global styles
+```
 
-Users should be able to:
+## Component Organization
 
-- View the home, about, recipes index, and recipe detail pages
-- Search for recipes by name or ingredient
-- Filter recipes by max prep or cook time
-- View the optimal layout for the interface depending on their device's screen size
-- See hover and focus states for all interactive elements on the page
+### Components (`src/components/`)
+- **Layout Components**: Header, Footer, Navigation
+- **Feature Components**: RecipeCard, RecipeFilters, RecipeGrid
+- **UI Components**: FilterDropdown, SearchBar, Breadcrumb
+- **State Components**: LoadingState, ErrorMessage
+- **Detail Components**: RecipeInfo, RecipeIngredients, RecipeInstructions
 
-### Screenshot
+### Hooks (`src/hooks/`)
+- `useRecipes` - Fetches and manages recipe data
+- `useRecipeFilters` - Manages filtering logic
+- `useMenu` - Handles mobile menu state
+- `useClickOutside` - Detects clicks outside elements
 
-![](./screenshot.jpg)
+### Services (`src/services/`)
+- `recipeService.js` - API calls and data fetching logic
 
-### Links
+### Utils (`src/utils/`)
+- `recipeFilters.js` - Recipe filtering algorithms
 
-- Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+### Constants (`src/constants/`)
+- `filterOptions.js` - Filter dropdown options
+- `navigation.js` - Navigation links and routes
 
-## My process
+## Benefits of This Structure
 
-### Built with
+1. **Separation of Concerns**: Logic, UI, and data are separated
+2. **Reusability**: Components and hooks can be reused across the app
+3. **Maintainability**: Easy to find and update specific functionality
+4. **Testability**: Isolated functions and components are easier to test
+5. **Scalability**: Easy to add new features without cluttering existing code
 
-- Semantic HTML5 markup
-- CSS custom properties
-- Flexbox
-- CSS Grid
-- Mobile-first workflow
-- Tailwindcss
+## Key Principles
 
-### What I learned
+- **Single Responsibility**: Each component/hook has one clear purpose
+- **DRY (Don't Repeat Yourself)**: Shared logic extracted to hooks/utils
+- **Composition**: Small components compose into larger features
+- **Consistency**: Similar patterns used throughout the codebase
 
-This is my first project using Tailwindcss
-
-## Acknowledgments
-
-I leared tailwind by watching the following youtube videos
-
-- JavaScript Mastery channel: https://www.youtube.com/watch?v=6biMWgD6_JY&t=2037s&pp=0gcJCfwJAYcqIYzv
-- Web Dev Simplified channel: https://www.youtube.com/watch?v=x1RJ5Q09PqM
-- chatGPT was really helpful reviewing my code especially JS codes

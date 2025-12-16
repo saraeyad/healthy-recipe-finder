@@ -1,16 +1,29 @@
 {
-  "name": "starter-code",
+  "name": "recipe-finder-website",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Recipe finder website built with React",
+  "type": "module",
   "scripts": {
-    "watch": "tailwindcss -i ./input.css -o ./output.css --watch"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./src/output.css --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0"
+  },
   "devDependencies": {
-    "tailwindcss": "^3.4.17"
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.17",
+    "vite": "^5.0.8"
   }
 }
