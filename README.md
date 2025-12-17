@@ -1,9 +1,5 @@
 # Project Structure
 
-This document outlines the organized structure of the Recipe Finder React application.
-
-## Directory Structure
-
 ```
 src/
 ├── assets/              # Static assets (images)
