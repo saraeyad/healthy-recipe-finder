@@ -9,6 +9,7 @@ import {
   formatQuantity,
   planEntries,
   relatedRecipes,
+  weekOf,
   scaleIngredient,
   scaleIngredients,
 } from './recipeLogic.js'
@@ -96,6 +97,14 @@ test('plan entries read each meal slot', () => {
   assert.equal(entries[0].meal, 'dinner')
   const list = buildShoppingList(entries, recipes)
   assert.ok(list.some((item) => /olive oil/i.test(item.label)))
+})
+
+test('the calendar week starts on Sunday around today in Hebron', () => {
+  const week = weekOf('Asia/Hebron', new Date('2026-10-22T12:00:00Z'))
+  assert.equal(week.range, 'Oct 18 – 24')
+  assert.deepEqual(week.days.map((day) => day.date), [18, 19, 20, 21, 22, 23, 24])
+  assert.equal(week.days[0].id, 'sunday')
+  assert.equal(week.days.find((day) => day.isToday).id, 'thursday')
 })
 
 test('related recipes prefer shared ingredients and stay in a stable order', () => {

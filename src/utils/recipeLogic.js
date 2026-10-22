@@ -293,9 +293,45 @@ export function relatedRecipes(recipes, recipe, count = 3) {
     .map((entry) => entry.item)
 }
 
-export function todayId(timeZone = 'Asia/Hebron') {
-  const name = new Date().toLocaleDateString('en-US', { weekday: 'long', timeZone }).toLowerCase()
+export function todayId(timeZone = 'Asia/Hebron', now = new Date()) {
+  const name = now.toLocaleDateString('en-US', { weekday: 'long', timeZone }).toLowerCase()
   return DAYS.some((day) => day.id === name) ? name : 'sunday'
+}
+
+export function weekOf(timeZone = 'Asia/Hebron', now = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(now)
+  const pick = (type) => Number(parts.find((part) => part.type === type).value)
+  const year = pick('year')
+  const month = pick('month')
+  const day = pick('day')
+  const anchor = new Date(Date.UTC(year, month - 1, day))
+  const sunday = new Date(anchor)
+  sunday.setUTCDate(anchor.getUTCDate() - anchor.getUTCDay())
+
+  const days = DAYS.map((info, index) => {
+    const date = new Date(sunday)
+    date.setUTCDate(sunday.getUTCDate() + index)
+    return {
+      ...info,
+      short: info.label.slice(0, 3),
+      date: date.getUTCDate(),
+      monthShort: date.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' }),
+      isToday: date.getUTCDate() === day && date.getUTCMonth() === month - 1 && date.getUTCFullYear() === year,
+    }
+  })
+
+  const first = days[0]
+  const last = days[6]
+  const range = first.monthShort === last.monthShort
+    ? `${first.monthShort} ${first.date} – ${last.date}`
+    : `${first.monthShort} ${first.date} – ${last.monthShort} ${last.date}`
+
+  return { range, days }
 }
 
 export function emptyPlan() {
