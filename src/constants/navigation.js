@@ -17,5 +17,7 @@ export const ROUTES = {
   PLAN: '/plan',
   SAVED: '/saved',
   RECIPE_DETAIL: '/recipe/:slug',
+  LOGIN: '/login',
+  DASHBOARD: '/dashboard',
 }
 

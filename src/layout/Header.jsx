@@ -4,6 +4,32 @@ import { useMenu } from '../hooks/useMenu'
 import { useScrollHeader } from '../hooks/useScrollHeader'
 import Navigation, { SavedHeart } from './Navigation'
 import { PrimaryLink } from '../components/ui/Buttons'
+import { useAuth } from '../auth/AuthContext'
+
+function AccountLink({ onClick }) {
+  const { user } = useAuth()
+  if (user) {
+    return (
+      <Link
+        to="/dashboard"
+        onClick={onClick}
+        aria-label="Dashboard"
+        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-extrabold text-white shadow-brand"
+      >
+        {user.name.trim().slice(0, 1).toUpperCase()}
+      </Link>
+    )
+  }
+  return (
+    <Link
+      to="/login"
+      onClick={onClick}
+      className="inline-flex h-10 items-center rounded-full border border-ink/10 bg-white px-4 text-sm font-bold text-ink shadow-sm"
+    >
+      Log in
+    </Link>
+  )
+}
 
 function Header() {
   const { isMenuOpen, toggleMenu, closeMenu } = useMenu()
@@ -35,6 +61,7 @@ function Header() {
 
           <div className="hidden items-center gap-2 lg:flex">
             <SavedHeart />
+            <AccountLink />
             <PrimaryLink to="/recipes" className="!h-10 !px-5 !text-sm">
               Browse recipes
             </PrimaryLink>
@@ -63,6 +90,7 @@ function Header() {
           <Navigation onLinkClick={closeMenu} />
           <div className="mt-2 flex items-center gap-2">
             <SavedHeart onClick={closeMenu} />
+            <AccountLink onClick={closeMenu} />
             <Link to="/recipes" className="btn btn-sm" onClick={closeMenu}>
               Browse recipes
             </Link>

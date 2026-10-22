@@ -1,7 +1,12 @@
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 import { useKitchen } from '../kitchen/KitchenContext'
 
 function FavoriteButton({ slug, className = '' }) {
+  const { user } = useAuth()
   const { isFavorite, toggleFavorite } = useKitchen()
+  const navigate = useNavigate()
+  const location = useLocation()
   const saved = isFavorite(slug)
 
   return (
@@ -12,6 +17,11 @@ function FavoriteButton({ slug, className = '' }) {
       className={`inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/80 bg-white/90 text-mkt-teal shadow-card backdrop-blur transition hover:-translate-y-0.5 ${className}`}
       onClick={(event) => {
         event.stopPropagation()
+        event.preventDefault()
+        if (!user) {
+          navigate(`/login?next=${encodeURIComponent(`${location.pathname}${location.search}`)}`)
+          return
+        }
         toggleFavorite(slug)
       }}
     >

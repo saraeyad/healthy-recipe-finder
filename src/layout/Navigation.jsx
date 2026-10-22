@@ -1,19 +1,22 @@
 import { Link, useLocation } from 'react-router-dom'
 import { NAV_LINKS } from '../constants/navigation'
+import { useAuth } from '../auth/AuthContext'
 import { useKitchen } from '../kitchen/KitchenContext'
-
-const links = NAV_LINKS.filter((link) => link.path !== '/saved')
 
 export function SavedHeart({ onClick, className = '' }) {
   const location = useLocation()
+  const { user } = useAuth()
   const { favorites } = useKitchen()
   const active = location.pathname === '/saved'
   const filled = active || favorites.length > 0
   const count = favorites.length
+  const destination = user
+    ? '/saved'
+    : `/login?next=${encodeURIComponent('/saved')}`
 
   return (
     <Link
-      to="/saved"
+      to={destination}
       onClick={onClick}
       aria-label={count > 0 ? `Saved recipes, ${count}` : 'Saved recipes'}
       aria-current={active ? 'page' : undefined}
@@ -37,6 +40,13 @@ export function SavedHeart({ onClick, className = '' }) {
 
 function Navigation({ onLinkClick }) {
   const location = useLocation()
+  const { user } = useAuth()
+  const links = NAV_LINKS.filter((link) => link.path !== '/saved' && (user || link.path !== '/plan'))
+  const items = []
+  links.forEach((link) => {
+    items.push(link)
+    if (user && link.path === '/recipes') items.push({ path: '/dashboard', label: 'Dashboard' })
+  })
   const isActive = (path) => {
     if (path === '/recipes') return location.pathname === '/recipes' || location.pathname.startsWith('/recipe/')
     return location.pathname === path
@@ -44,7 +54,7 @@ function Navigation({ onLinkClick }) {
 
   return (
     <ul className="flex flex-col gap-1 lg:flex-row lg:items-center lg:gap-1">
-      {links.map((link) => (
+      {items.map((link) => (
         <li key={link.path}>
           <Link
             to={link.path}

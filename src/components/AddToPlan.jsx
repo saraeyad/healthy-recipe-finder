@@ -1,13 +1,27 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 import { useKitchen } from '../kitchen/KitchenContext'
 import { DAYS, MEALS, todayId } from '../utils/recipeLogic'
 
 function AddToPlan({ slug, servings }) {
+  const { user } = useAuth()
   const { setSlot } = useKitchen()
   const [day, setDay] = useState(todayId())
   const [meal, setMeal] = useState('dinner')
   const [message, setMessage] = useState('')
+
+  if (!user) {
+    return (
+      <div className="rounded-3xl border border-divider bg-white p-4 shadow-card">
+        <h2 className="text-lg font-extrabold text-ink">Add to this week</h2>
+        <p className="mt-1 text-sm text-ink-muted">Log in to put this recipe on your calendar.</p>
+        <Link to={`/login?next=${encodeURIComponent(`/recipe/${slug}`)}`} className="mt-4 inline-flex h-11 items-center rounded-full bg-ink px-5 text-sm font-bold text-white">
+          Log in
+        </Link>
+      </div>
+    )
+  }
 
   const add = () => {
     setSlot(day, meal, { slug, servings })

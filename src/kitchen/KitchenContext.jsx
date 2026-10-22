@@ -1,8 +1,30 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { useAuth } from '../auth/AuthContext'
 import { emptyPlan } from '../utils/recipeLogic'
 
-const STORAGE_KEY = 'hrf.kitchen.v1'
+const GUEST_KEY = 'hrf.kitchen.v1'
 const KitchenContext = createContext(null)
+
+function storageKey(userId) {
+  return userId ? `${GUEST_KEY}:${userId}` : null
+}
+
+function readKey(key) {
+  try {
+    let raw = localStorage.getItem(key)
+    if (!raw) {
+      const guest = localStorage.getItem(GUEST_KEY)
+      if (guest) {
+        localStorage.setItem(key, guest)
+        localStorage.removeItem(GUEST_KEY)
+        raw = guest
+      }
+    }
+    return sanitize(raw ? JSON.parse(raw) : null)
+  } catch {
+    return sanitize(null)
+  }
+}
 
 function sanitizeSlot(slot) {
   if (!slot || typeof slot.slug !== 'string' || !slot.slug) return null
@@ -45,25 +67,34 @@ function sanitize(data) {
   }
 }
 
-function readStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    return sanitize(raw ? JSON.parse(raw) : null)
-  } catch {
-    return sanitize(null)
-  }
-}
-
 export function KitchenProvider({ children }) {
-  const [state, setState] = useState(readStorage)
+  const { user, ready } = useAuth()
+  const key = storageKey(user?.id)
+  const [state, setState] = useState(() => sanitize(null))
+  const skipWrite = useRef(true)
 
   useEffect(() => {
+    if (!ready) return
+    skipWrite.current = true
+    if (!key) {
+      setState(sanitize(null))
+      return
+    }
+    setState(readKey(key))
+  }, [key, ready])
+
+  useEffect(() => {
+    if (!key) return
+    if (skipWrite.current) {
+      skipWrite.current = false
+      return
+    }
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      localStorage.setItem(key, JSON.stringify(state))
     } catch {
       // Private mode and full storage should not break cooking.
     }
-  }, [state])
+  }, [key, state])
 
   const toggleFavorite = useCallback((slug) => {
     setState((current) => {

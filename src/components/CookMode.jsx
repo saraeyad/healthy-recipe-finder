@@ -13,8 +13,9 @@ function CookMode({ recipe, servings, onClose, onCooked }) {
 
   const finish = () => {
     if (recorded.current) return
+    const saved = onCooked()
+    if (saved === false) return
     recorded.current = true
-    onCooked()
     setDone(true)
   }
 

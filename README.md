@@ -26,13 +26,17 @@ Diet tags (vegetarian, vegan, gluten-free, protein-forward) are read from the in
 | `/` | Home, with scroll motion and a strip of your saved meals |
 | `/recipes` | Searchable recipe list |
 | `/recipe/:slug` | Recipe detail, servings, cook mode, and add to plan |
-| `/plan` | Weekly planner and shopping list |
+| `/login` | Create an account or log in |
+| `/dashboard` | Your week, shopping list, saved recipes, and cooked meals |
+| `/plan` | Weekly calendar and shopping list |
 | `/saved` | Saved recipes, recently viewed, and cooked history |
 | `/about` | About the project |
 
+Browsing recipes stays open. The dashboard, calendar, and saved page ask you to log in.
+
 ## Kitchen data
 
-`KitchenProvider` keeps this device’s kitchen in `localStorage` under `hrf.kitchen.v1`:
+Accounts stay in this browser. Passwords are stored as a hash, not as plain text. Each account has its own kitchen under `hrf.kitchen.v1:<account>`:
 
 - favorites
 - the last eight recipes you opened
@@ -49,7 +53,7 @@ npm install
 npm run dev
 npm run build
 npm run preview
-node --test src/utils/recipeLogic.test.js
+node --test src/utils/recipeLogic.test.js src/auth/authLogic.test.js
 ```
 
 The logic tests cover ingredient search, diet tags, sorting, quantity scaling, the merged shopping list, plan slots, and related recipes.

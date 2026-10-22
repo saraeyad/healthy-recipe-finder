@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 import { getRecipeBySlug, fetchRecipes } from '../services/recipeService'
 import RecipeCard from '../components/RecipeCard'
 import RecipeInfo from '../components/RecipeInfo'
@@ -19,6 +20,8 @@ import { classifyRecipe, dietLabel, relatedRecipes, scaleIngredients } from '../
 
 function RecipeDetail() {
   const { slug } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
   const { remember, markCooked, cooked } = useKitchen()
   const [recipe, setRecipe] = useState(null)
   const [moreRecipes, setMoreRecipes] = useState([])
@@ -89,7 +92,14 @@ function RecipeDetail() {
           recipe={recipe}
           servings={servings}
           onClose={() => setCooking(false)}
-          onCooked={() => markCooked(recipe.slug, servings)}
+          onCooked={() => {
+            if (!user) {
+              navigate(`/login?next=${encodeURIComponent(`/recipe/${recipe.slug}`)}`)
+              return false
+            }
+            markCooked(recipe.slug, servings)
+            return true
+          }}
         />
       )}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
