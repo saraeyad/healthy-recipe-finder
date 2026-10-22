@@ -19,11 +19,19 @@ Live site: [https://healthy-recipe-finder-ashy.vercel.app/](https://healthy-reci
 
 Diet tags (vegetarian, vegan, gluten-free, protein-forward) are read from the ingredient list. They are a kitchen heuristic, not a lab analysis. Difficulty is Easy when the recipe is 15 minutes or less with at most four steps, Weeknight at 30 minutes or less, and Weekend after that.
 
+The week is a Sunday-to-Saturday calendar. Today follows `Asia/Hebron`. Pick a day, set the servings, and the shopping list updates beside it.
+
+![A one-week calendar, with Thursday marked as today and dinner set to lemon garlic salmon](docs/calendar.jpg)
+
+After you log in, the kitchen dashboard keeps the week, the shopping list, saved recipes, and cooked meals in one place.
+
+![The kitchen dashboard, with this week's meals, a shopping list, saved recipes, and cooked history](docs/dashboard.jpg)
+
 ## Routes
 
 | Path | Page |
 | --- | --- |
-| `/` | Home, with scroll motion and a strip of your saved meals |
+| `/` | Home, with scroll motion |
 | `/recipes` | Searchable recipe list |
 | `/recipe/:slug` | Recipe detail, servings, cook mode, and add to plan |
 | `/login` | Create an account or log in |
