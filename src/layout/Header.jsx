@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import logo from '../assets/images/logo.svg'
 import { useMenu } from '../hooks/useMenu'
 import { useScrollHeader } from '../hooks/useScrollHeader'
-import Navigation from './Navigation'
+import Navigation, { SavedHeart } from './Navigation'
 import { PrimaryLink } from '../components/ui/Buttons'
 
 function Header() {
@@ -33,7 +33,8 @@ function Header() {
             <Navigation onLinkClick={closeMenu} />
           </div>
 
-          <div className="hidden lg:block">
+          <div className="hidden items-center gap-2 lg:flex">
+            <SavedHeart />
             <PrimaryLink to="/recipes" className="!h-10 !px-5 !text-sm">
               Browse recipes
             </PrimaryLink>
@@ -60,9 +61,12 @@ function Header() {
           }`}
         >
           <Navigation onLinkClick={closeMenu} />
-          <Link to="/recipes" className="btn btn-sm mt-2" onClick={closeMenu}>
-            Browse recipes
-          </Link>
+          <div className="mt-2 flex items-center gap-2">
+            <SavedHeart onClick={closeMenu} />
+            <Link to="/recipes" className="btn btn-sm" onClick={closeMenu}>
+              Browse recipes
+            </Link>
+          </div>
         </div>
       </div>
     </header>
