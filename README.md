@@ -1,5 +1,7 @@
 # Healthy Recipe Finder
 
+![Healthy Recipe Finder home page, with tonight's salmon recipe on the hero](docs/home.jpg)
+
 A React app for finding whole-food recipes, scaling servings, cooking step by step, and planning a week of meals. Recipes live in `data.json`. Favorites, recent views, cooked history, and the weekly plan stay in the browser.
 
 Live site: [https://healthy-recipe-finder-ashy.vercel.app/](https://healthy-recipe-finder-ashy.vercel.app/)
