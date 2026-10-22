@@ -1,11 +1,11 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 import { greeting } from '../auth/authLogic'
 import { useKitchen } from '../kitchen/KitchenContext'
 import { useRecipes } from '../hooks/useRecipes'
 import Eyebrow from '../components/ui/Eyebrow'
 import LoadingState from '../components/LoadingState'
-import { MEALS, buildShoppingList, planEntries, weekOf } from '../utils/recipeLogic'
+import { DAYS, MEALS, buildShoppingList, planEntries, weekOf } from '../utils/recipeLogic'
 
 const MEAL_TONE = {
   breakfast: 'bg-status-attention',
@@ -23,8 +23,7 @@ function Stat({ label, value, to }) {
 }
 
 function Dashboard() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
   const { recipes, loading } = useRecipes()
   const { plan, favorites, cooked, checks, toggleCheck } = useKitchen()
   const week = weekOf()
@@ -39,28 +38,16 @@ function Dashboard() {
     .slice(0, 4)
 
   return (
-    <div className="bg-canvas pt-28 lg:pt-32">
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div className="max-w-3xl">
-            <Eyebrow>Dashboard</Eyebrow>
-            <h1 className="mt-5 text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
-              {greeting()}, {user.name}.
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-              Your week, shopping list, saved recipes, and cooked meals are here.
-            </p>
-          </div>
-          <button
-            type="button"
-            className="h-11 rounded-full border border-ink/10 bg-white px-5 text-sm font-bold text-ink"
-            onClick={() => {
-              logout()
-              navigate('/')
-            }}
-          >
-            Log out
-          </button>
+    <div>
+      <section className="mx-auto max-w-6xl pb-12">
+        <div className="max-w-3xl">
+          <Eyebrow>Overview</Eyebrow>
+          <h1 className="mt-5 text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
+            {greeting()}, {user.name}.
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+            Your week, shopping list, saved recipes, and cooked meals are here.
+          </p>
         </div>
 
         {loading ? (
@@ -103,6 +90,25 @@ function Dashboard() {
                     </Link>
                   ))}
                 </div>
+                <ul className="mt-5 space-y-2">
+                  {entries.length === 0 ? (
+                    <li className="text-sm text-ink-muted">Nothing is on the calendar yet.</li>
+                  ) : entries.slice(0, 4).map((entry) => {
+                    const recipe = bySlug.get(entry.slug)
+                    if (!recipe) return null
+                    return (
+                      <li key={`${entry.day}-${entry.meal}`} className="flex items-center justify-between gap-3 rounded-2xl bg-canvas px-4 py-3">
+                        <div>
+                          <p className="text-[11px] font-bold uppercase tracking-wide text-mkt-teal">
+                            {DAYS.find((day) => day.id === entry.day)?.label} · {MEALS.find((meal) => meal.id === entry.meal)?.label}
+                          </p>
+                          <Link to={`/recipe/${recipe.slug}`} className="font-bold text-ink hover:text-primary">{recipe.title}</Link>
+                        </div>
+                        <span className="text-sm font-semibold text-ink-muted">{entry.servings} srv</span>
+                      </li>
+                    )
+                  })}
+                </ul>
               </section>
 
               <section className="rounded-[2rem] border border-white/80 bg-white p-5 shadow-card sm:p-6">

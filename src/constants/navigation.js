@@ -1,8 +1,12 @@
 export const NAV_LINKS = [
   { path: '/recipes', label: 'Recipes' },
-  { path: '/plan', label: 'Plan' },
-  { path: '/saved', label: 'Saved' },
   { path: '/about', label: 'About' },
+]
+
+export const DASHBOARD_LINKS = [
+  { path: '/dashboard', label: 'Overview' },
+  { path: '/plan', label: 'Calendar' },
+  { path: '/saved', label: 'Saved' },
 ]
 
 export const FOOTER_LINKS = [

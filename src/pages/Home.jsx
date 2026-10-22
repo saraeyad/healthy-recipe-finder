@@ -4,7 +4,6 @@ import HowItWorks from '../components/marketing/HowItWorks'
 import FeatureBento from '../components/marketing/FeatureBento'
 import RealLife from '../components/marketing/RealLife'
 import Commitments from '../components/marketing/Commitments'
-import KitchenStrip from '../components/marketing/KitchenStrip'
 import CTA from '../components/CTA'
 
 function Home() {
@@ -16,7 +15,6 @@ function Home() {
       <FeatureBento />
       <RealLife />
       <Commitments />
-      <KitchenStrip />
       <CTA />
     </div>
   )

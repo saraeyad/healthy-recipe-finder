@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Route, BrowserRouter, Routes } from 'react-router-dom'
 import MainLayout from './layout/MainLayout'
+import DashboardLayout from './layout/DashboardLayout'
 import Home from './pages/Home'
 import About from './pages/About'
 import Recipes from './pages/Recipes'
@@ -18,18 +19,20 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <KitchenProvider>
-          <MainLayout>
-            <Routes>
+          <Routes>
+            <Route element={<MainLayout />}>
               <Route path={ROUTES.HOME} element={<Home />} />
               <Route path={ROUTES.ABOUT} element={<About />} />
               <Route path={ROUTES.RECIPES} element={<Recipes />} />
               <Route path={ROUTES.LOGIN} element={<Login />} />
               <Route path={ROUTES.RECIPE_DETAIL} element={<RecipeDetail />} />
-              <Route path={ROUTES.DASHBOARD} element={<RequireAuth><Dashboard /></RequireAuth>} />
-              <Route path={ROUTES.PLAN} element={<RequireAuth><Planner /></RequireAuth>} />
-              <Route path={ROUTES.SAVED} element={<RequireAuth><Saved /></RequireAuth>} />
-            </Routes>
-          </MainLayout>
+            </Route>
+            <Route element={<RequireAuth><DashboardLayout /></RequireAuth>}>
+              <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
+              <Route path={ROUTES.PLAN} element={<Planner />} />
+              <Route path={ROUTES.SAVED} element={<Saved />} />
+            </Route>
+          </Routes>
         </KitchenProvider>
       </AuthProvider>
     </BrowserRouter>
@@ -37,4 +40,3 @@ function App() {
 }
 
 export default App
-

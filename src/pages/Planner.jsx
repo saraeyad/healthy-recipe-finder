@@ -58,8 +58,8 @@ function Planner() {
   }
 
   return (
-    <div className="bg-canvas pt-28 lg:pt-32">
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+    <div>
+      <section className="mx-auto max-w-6xl pb-12">
         <div className="max-w-3xl">
           <Eyebrow>The week</Eyebrow>
           <h1 className="mt-5 text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
@@ -286,7 +286,7 @@ function Planner() {
                 </div>
               </section>
 
-              <aside className="rounded-[2rem] border border-white/80 bg-white p-5 shadow-float sm:p-6 lg:sticky lg:top-28">
+              <aside className="sticky top-16 rounded-[2rem] border border-white/80 bg-white p-5 shadow-float sm:p-6 lg:top-6">
                 <div className="flex items-end justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.16em] text-mkt-teal">{week.range}</p>

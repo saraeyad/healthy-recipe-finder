@@ -40,13 +40,6 @@ export function SavedHeart({ onClick, className = '' }) {
 
 function Navigation({ onLinkClick }) {
   const location = useLocation()
-  const { user } = useAuth()
-  const links = NAV_LINKS.filter((link) => link.path !== '/saved' && (user || link.path !== '/plan'))
-  const items = []
-  links.forEach((link) => {
-    items.push(link)
-    if (user && link.path === '/recipes') items.push({ path: '/dashboard', label: 'Dashboard' })
-  })
   const isActive = (path) => {
     if (path === '/recipes') return location.pathname === '/recipes' || location.pathname.startsWith('/recipe/')
     return location.pathname === path
@@ -54,7 +47,7 @@ function Navigation({ onLinkClick }) {
 
   return (
     <ul className="flex flex-col gap-1 lg:flex-row lg:items-center lg:gap-1">
-      {items.map((link) => (
+      {NAV_LINKS.map((link) => (
         <li key={link.path}>
           <Link
             to={link.path}

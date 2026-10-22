@@ -27,9 +27,9 @@ Diet tags (vegetarian, vegan, gluten-free, protein-forward) are read from the in
 | `/recipes` | Searchable recipe list |
 | `/recipe/:slug` | Recipe detail, servings, cook mode, and add to plan |
 | `/login` | Create an account or log in |
-| `/dashboard` | Your week, shopping list, saved recipes, and cooked meals |
-| `/plan` | Weekly calendar and shopping list |
-| `/saved` | Saved recipes, recently viewed, and cooked history |
+| `/dashboard` | Kitchen overview, inside the dashboard sidebar |
+| `/plan` | Weekly calendar and shopping list, inside the dashboard |
+| `/saved` | Saved recipes, recently viewed, and cooked history, inside the dashboard |
 | `/about` | About the project |
 
 Browsing recipes stays open. The dashboard, calendar, and saved page ask you to log in.

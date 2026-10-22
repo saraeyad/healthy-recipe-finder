@@ -30,14 +30,14 @@ function Saved() {
     .filter((entry) => entry.recipe)
 
   return (
-    <div className="bg-canvas pt-28 lg:pt-32">
-      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+    <div>
+      <section className="mx-auto max-w-6xl pb-12">
         <Eyebrow>On this device</Eyebrow>
         <h1 className="mt-5 max-w-3xl text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
           Saved, recent, and cooked
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-          Favorites and your cook history stay in this browser. Nothing is sent to an account.
+          Favorites and your cook history stay with this account on this browser.
         </p>
         {loading ? (
           <LoadingState message="Loading your kitchen..." />
