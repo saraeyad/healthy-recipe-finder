@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import { getRecipeBySlug, getRandomRecipes, fetchRecipes } from '../services/recipeService'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { getRecipeBySlug, fetchRecipes } from '../services/recipeService'
 import RecipeCard from '../components/RecipeCard'
 import RecipeInfo from '../components/RecipeInfo'
 import RecipeIngredients from '../components/RecipeIngredients'
@@ -8,18 +8,25 @@ import RecipeInstructions from '../components/RecipeInstructions'
 import Breadcrumb from '../components/Breadcrumb'
 import LoadingState from '../components/LoadingState'
 import ErrorMessage from '../components/ErrorMessage'
+import Reveal from '../components/ui/Reveal'
+import FavoriteButton from '../components/FavoriteButton'
+import ServingsControl from '../components/ServingsControl'
+import CookMode from '../components/CookMode'
+import AddToPlan from '../components/AddToPlan'
+import { useParallax } from '../hooks/useParallax'
+import { useKitchen } from '../kitchen/KitchenContext'
+import { classifyRecipe, dietLabel, relatedRecipes, scaleIngredients } from '../utils/recipeLogic'
 
 function RecipeDetail() {
   const { slug } = useParams()
+  const { remember, markCooked, cooked } = useKitchen()
   const [recipe, setRecipe] = useState(null)
   const [moreRecipes, setMoreRecipes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
-  useEffect(() => {
-    // Scroll to top when recipe detail page loads
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [slug])
+  const [servings, setServings] = useState(1)
+  const [cooking, setCooking] = useState(false)
+  const [frameRef, offset] = useParallax(40)
 
   useEffect(() => {
     const loadRecipe = async () => {
@@ -30,52 +37,62 @@ function RecipeDetail() {
 
         if (foundRecipe) {
           setRecipe(foundRecipe)
+          setServings(foundRecipe.servings)
+          remember(foundRecipe.slug)
           const allRecipes = await fetchRecipes()
-          const randomRecipes = getRandomRecipes(allRecipes, slug, 3)
-          setMoreRecipes(randomRecipes)
+          setMoreRecipes(relatedRecipes(allRecipes, foundRecipe, 3))
         } else {
           setError('Recipe not found')
         }
       } catch (err) {
         setError(err.message)
-        console.error('Error loading recipe:', err)
       } finally {
         setLoading(false)
       }
     }
 
     loadRecipe()
-  }, [slug])
+  }, [slug, remember])
 
   if (loading) {
     return (
-      <main className="pt-[72px] md:pt-[93px]">
-        <section className="py-12 lg:py-16">
-          <LoadingState message="Loading recipe..." />
-        </section>
-      </main>
+      <div className="bg-canvas pt-32">
+        <LoadingState message="Loading recipe..." />
+      </div>
     )
   }
 
   if (error || !recipe) {
     return (
-      <main className="pt-[72px] md:pt-[93px]">
-        <section className="py-12 lg:py-16">
-          <ErrorMessage
-            message={error || 'Recipe not found.'}
-            showBackButton
-            backButtonText="Browse all recipes"
-            backButtonPath="/recipes"
-          />
-        </section>
-      </main>
+      <div className="bg-canvas pt-32">
+        <ErrorMessage
+          message={error || 'Recipe not found.'}
+          showBackButton
+          backButtonText="Browse all recipes"
+          backButtonPath="/recipes"
+        />
+      </div>
     )
   }
 
+  const meta = classifyRecipe(recipe)
+  const scaled = scaleIngredients(recipe.ingredients, recipe.servings, servings)
+  const history = cooked.filter((entry) => entry.slug === recipe.slug)
+  const scaleNote = servings === recipe.servings
+    ? `Written for ${recipe.servings} ${recipe.servings === 1 ? 'serving' : 'servings'}.`
+    : `Scaled from ${recipe.servings} to ${servings} servings. Salt and “to taste” lines stay as written.`
+
   return (
-    <main className="pt-[72px] md:pt-[93px]">
-      {/* Recipe Details Section */}
-      <section className="py-12 lg:py-16">
+    <div className="bg-canvas pt-28 lg:pt-32">
+      {cooking && (
+        <CookMode
+          recipe={recipe}
+          servings={servings}
+          onClose={() => setCooking(false)}
+          onCooked={() => markCooked(recipe.slug, servings)}
+        />
+      )}
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <Breadcrumb
           items={[
             { path: '/recipes', label: 'Recipes' },
@@ -83,40 +100,67 @@ function RecipeDetail() {
           ]}
         />
 
-        <div className="grid gap-10 lg:grid-cols-2 items-start">
-          <picture>
-            <source media="(min-width: 1024px)" srcSet={recipe.image.large} />
-            <img
-              src={recipe.image.small}
-              alt={recipe.title}
-              loading="lazy"
-              className="w-full rounded-[10px] object-cover lg:max-w-xl lg:max-h-xl"
-            />
-          </picture>
-
-          <div className="space-y-5">
-            <h1 className="text-preset-2">{recipe.title}</h1>
-            <p>{recipe.overview}</p>
-            <RecipeInfo recipe={recipe} />
-            <RecipeIngredients ingredients={recipe.ingredients} />
-            <RecipeInstructions instructions={recipe.instructions} />
+        <div className="grid items-start gap-10 lg:grid-cols-2">
+          <div className="lg:sticky lg:top-28">
+            <div ref={frameRef} className="relative overflow-hidden rounded-[2rem] shadow-float ring-1 ring-ink/[0.05]">
+              <img
+                src={recipe.image.large}
+                alt={recipe.title}
+                className="w-full object-cover"
+                style={{ transform: `translateY(${offset * 0.4}px) scale(1.06)` }}
+              />
+              <FavoriteButton slug={recipe.slug} className="absolute right-4 top-4 h-12 w-12" />
+            </div>
           </div>
+
+          <Reveal>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-mkt-mint-bg px-3 py-1 text-xs font-bold text-mkt-emerald-deep">{meta.total} min · {meta.difficulty}</span>
+              {meta.diets.map((diet) => (
+                <span key={diet} className="rounded-full bg-white px-3 py-1 text-xs font-bold text-mkt-teal ring-1 ring-line">{dietLabel(diet)}</span>
+              ))}
+            </div>
+            <h1 className="mt-3 text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
+              {recipe.title}
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-mkt-body sm:text-lg">{recipe.overview}</p>
+            {history.length > 0 && (
+              <p className="mt-3 text-sm font-semibold text-ink-muted">
+                Cooked {history.length} {history.length === 1 ? 'time' : 'times'} · last {new Date(history[0].at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+              </p>
+            )}
+            <div className="mt-6">
+              <RecipeInfo recipe={recipe} />
+            </div>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <ServingsControl value={servings} onChange={setServings} />
+              <button type="button" className="h-10 rounded-full bg-gradient-to-br from-primary to-mkt-teal px-5 text-sm font-bold text-white shadow-brand" onClick={() => setCooking(true)}>
+                Start cooking
+              </button>
+            </div>
+            <div className="mt-8 space-y-8">
+              <RecipeIngredients ingredients={scaled} note={scaleNote} />
+              <RecipeInstructions instructions={recipe.instructions} />
+              <AddToPlan slug={recipe.slug} servings={servings} />
+            </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="border-t-[1px] border-t-neutral-200"></div>
-
-      {/* More Recipes Section */}
-      <section className="py-12 md:py-16">
-        <h2 className="text-preset-3 mb-6">More recipes</h2>
-        <div className="grid gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          {moreRecipes.map((r) => (
-            <RecipeCard key={r.id} recipe={r} />
-          ))}
-        </div>
-      </section>
-    </main>
+      {moreRecipes.length > 0 && (
+        <section className="border-t border-divider bg-white/60 px-4 py-14 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <h2 className="text-2xl font-extrabold tracking-tight text-ink">Similar recipes</h2>
+            <p className="mb-6 mt-1 text-sm text-ink-muted">Ranked by shared ingredients and a similar total time.</p>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {moreRecipes.map((item) => (
+                <RecipeCard key={item.id} recipe={item} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
   )
 }
 

@@ -7,7 +7,7 @@ function PageTransition({ children }) {
   const [transitionStage, setTransitionStage] = useState('entering')
 
   useEffect(() => {
-    if (location !== displayLocation) {
+    if (location.pathname !== displayLocation.pathname) {
       setTransitionStage('exiting')
     }
   }, [location, displayLocation])
@@ -17,20 +17,18 @@ function PageTransition({ children }) {
       const timer = setTimeout(() => {
         setDisplayLocation(location)
         setTransitionStage('entering')
-      }, 150)
-
+        window.scrollTo({ top: 0, behavior: 'auto' })
+      }, 160)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [transitionStage, location])
 
   return (
     <div
-      className={`transition-opacity duration-300 ${
-        transitionStage === 'entering' ? 'opacity-100' : 'opacity-0'
-      }`}
-      style={{
-        pointerEvents: transitionStage === 'entering' ? 'auto' : 'none'
-      }}
+      key={displayLocation.pathname}
+      className={transitionStage === 'entering' ? 'animate-page-in' : 'opacity-0'}
+      style={{ pointerEvents: transitionStage === 'entering' ? 'auto' : 'none' }}
     >
       {children}
     </div>
@@ -38,4 +36,3 @@ function PageTransition({ children }) {
 }
 
 export default PageTransition
-

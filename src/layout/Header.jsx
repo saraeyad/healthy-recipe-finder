@@ -1,50 +1,72 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/images/logo.svg'
 import { useMenu } from '../hooks/useMenu'
+import { useScrollHeader } from '../hooks/useScrollHeader'
 import Navigation from './Navigation'
+import { PrimaryLink } from '../components/ui/Buttons'
 
 function Header() {
   const { isMenuOpen, toggleMenu, closeMenu } = useMenu()
+  const { scrolled, progress } = useScrollHeader()
+  const solid = scrolled || isMenuOpen
 
   return (
-    <header className="box-border p-4 md:p-8 md:pb-5 lg:py-5 shadow-[inset_0_-1px_0_0_theme(colors.neutral.200)] outline-neutral-200 bg-neutral-100 fixed w-full top-0 left-0 z-30">
-      <nav className="max-w-[1320px] mx-auto flex items-center justify-between" aria-label="Main navigation">
-        <Link to="/">
-          <img src={logo} alt="Healthy recipe finder logo" />
-        </Link>
+    <header className="fixed inset-x-0 top-0 z-50 px-3 sm:px-5">
+      <div
+        className={`relative mx-auto border transition-[max-width,margin,background-color,box-shadow,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          solid
+            ? `mt-3 max-w-6xl border-white/80 bg-white/80 shadow-float backdrop-blur-xl ${isMenuOpen ? 'rounded-[1.75rem]' : 'rounded-full'}`
+            : 'mt-0 max-w-7xl rounded-none border-transparent bg-transparent'
+        }`}
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-8 top-0 h-px origin-left bg-gradient-to-r from-primary via-accent to-mkt-glow transition-opacity duration-300"
+          style={{ transform: `scaleX(${progress})`, opacity: scrolled ? 1 : 0 }}
+        />
+        <div className={`flex items-center justify-between gap-4 px-3 transition-[height] duration-500 sm:px-5 ${solid ? 'h-16' : 'h-20 lg:h-24'}`}>
+          <Link to="/" className="shrink-0 rounded-full" onClick={closeMenu}>
+            <img src={logo} alt="Healthy recipe finder" className="h-8 w-auto" />
+          </Link>
+
+          <div className="hidden lg:block">
+            <Navigation onLinkClick={closeMenu} />
+          </div>
+
+          <div className="hidden lg:block">
+            <PrimaryLink to="/recipes" className="!h-10 !px-5 !text-sm">
+              Browse recipes
+            </PrimaryLink>
+          </div>
+
+          <button
+            className="z-50 flex h-10 w-10 items-center justify-center rounded-full border border-ink/10 bg-white text-ink shadow-sm lg:hidden"
+            aria-controls="nav-menu"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle navigation menu"
+            onClick={toggleMenu}
+          >
+            <img
+              src={isMenuOpen ? '/assets/images/icon-close-menu.svg' : '/assets/images/icon-hamburger-menu.svg'}
+              alt=""
+            />
+          </button>
+        </div>
 
         <div
           id="nav-menu"
-          className={`absolute top-[72px] md:top-[92px] overflow-hidden p-2 lg:p-0 w-[calc(100%-32px)] md:w-[calc(100%-64px)] rounded-b-[10px] bg-white flex flex-col gap-[10px] transition-all duration-500 ease-out lg:opacity-100 lg:translate-y-0 lg:pointer-events-auto lg:static lg:flex-row lg:items-center lg:justify-between lg:bg-transparent lg:w-2/3 ${
-            isMenuOpen
-              ? 'opacity-100 translate-y-0 pointer-events-auto scale-100'
-              : 'opacity-0 -translate-y-5 pointer-events-none scale-95'
+          className={`overflow-hidden px-3 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+            isMenuOpen ? 'max-h-[32rem] pb-4 opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
           <Navigation onLinkClick={closeMenu} />
-          <Link to="/recipes" className="btn btn-sm" onClick={closeMenu}>
+          <Link to="/recipes" className="btn btn-sm mt-2" onClick={closeMenu}>
             Browse recipes
           </Link>
         </div>
-
-        <button
-          className="z-50 w-10 h-10 rounded-sm bg-neutral-200 flex items-center justify-center lg:hidden"
-          id="menu-btn"
-          aria-controls="nav-menu"
-          aria-expanded={isMenuOpen}
-          aria-label="Toggle navigation menu"
-          onClick={toggleMenu}
-        >
-          <img
-            id="humburger"
-            src={isMenuOpen ? '/assets/images/icon-close-menu.svg' : '/assets/images/icon-hamburger-menu.svg'}
-            alt="menu"
-          />
-        </button>
-      </nav>
+      </div>
     </header>
   )
 }
 
 export default Header
-

@@ -4,9 +4,9 @@ import PageTransition from '../components/PageTransition'
 
 function MainLayout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-1">
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
@@ -15,4 +15,3 @@ function MainLayout({ children }) {
 }
 
 export default MainLayout
-

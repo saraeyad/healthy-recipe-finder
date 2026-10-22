@@ -1,34 +1,38 @@
-import { Link } from 'react-router-dom'
+import Eyebrow from './ui/Eyebrow'
+import Reveal from './ui/Reveal'
+import { PrimaryLink } from './ui/Buttons'
+import { useParallax } from '../hooks/useParallax'
 
 function CTA() {
+  const [frameRef, offset] = useParallax(60)
+
   return (
-    <section className="text-center">
-      <div className="bg-neutral-200 max-w-[1192px] rounded-2xl py-12 md:py-20 lg:py-24 mx-auto px-4 relative overflow-hidden">
+    <section id="contact" className="relative isolate scroll-mt-24 overflow-hidden bg-canvas lg:min-h-[560px]">
+      <div ref={frameRef} className="pointer-events-none absolute inset-0">
         <img
-          src="/assets/images/pattern-fork.svg"
+          src="/assets/images/image-about-beyond-the-plate-large.webp"
           alt=""
-          className="hidden md:block absolute md:-left-12 md:top-1/2 md:w-[180px] md:h-[231px] lg:-left-20 lg:top-4 lg:w-[314px] lg:h-[390px] object-contain pointer-events-none motion-safe:animate-moveY motion-reduce:animate-none"
-          aria-hidden="true"
+          className="h-full w-full object-cover"
+          style={{ transform: `translateY(${offset}px) scale(1.08)` }}
         />
-        <img
-          src="/assets/images/pattern-knife.svg"
-          alt=""
-          className="hidden md:block absolute md:-right-2 md:-top-12 md:w-[171px] md:h-[171px] lg:w-[338px] lg:h-[338px] lg:-right-14 lg:top-2 object-contain pointer-events-none motion-safe:animate-moveY2 motion-reduce:animate-none"
-          aria-hidden="true"
-        />
-        <h2 className="text-preset-2 mb-3 relative z-10">
-          Ready to cook smarter?
-        </h2>
-        <p className="text-preset-6 mb-8 md:mb-10 relative z-10">
-          Hit the button, pick a recipe, and get dinner on the table—fast.
-        </p>
-        <Link to="/recipes" className="btn px-6 py-4 relative z-10">
-          Browse recipes
-        </Link>
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-canvas via-canvas/88 to-canvas/25" />
+      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+        <Reveal className="max-w-xl">
+          <Eyebrow tone="glass">Dinner, decided</Eyebrow>
+          <h2 className="mt-6 text-balance text-3xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-4xl lg:text-[46px]">
+            Save the scrolling. Get dinner on the table.
+          </h2>
+          <p className="mt-4 text-pretty text-base leading-relaxed text-mkt-body sm:text-lg">
+            Pick a recipe, follow the short list, and eat something you would actually make again.
+          </p>
+          <div className="mt-8">
+            <PrimaryLink to="/recipes">Browse recipes</PrimaryLink>
+          </div>
+        </Reveal>
       </div>
     </section>
   )
 }
 
 export default CTA
-

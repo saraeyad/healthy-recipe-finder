@@ -2,58 +2,79 @@ import { useRecipes } from '../hooks/useRecipes'
 import { useRecipeFilters } from '../hooks/useRecipeFilters'
 import RecipeFilters from '../components/RecipeFilters'
 import RecipeGrid from '../components/RecipeGrid'
+import Eyebrow from '../components/ui/Eyebrow'
+import Reveal from '../components/ui/Reveal'
+import ErrorMessage from '../components/ErrorMessage'
 
 function Recipes() {
-  const { recipes, loading } = useRecipes()
+  const { recipes, loading, error } = useRecipes()
   const {
     searchTerm,
-    setSearchTerm,
     maxPrep,
-    setMaxPrep,
     maxCook,
-    setMaxCook,
+    diets,
+    sort,
     filteredRecipes,
+    update,
+    hasFilters,
+    clear,
   } = useRecipeFilters(recipes)
 
-  const handleFilterChange = (updates) => {
-    if (updates.searchTerm !== undefined) setSearchTerm(updates.searchTerm)
-    if (updates.maxPrep !== undefined) setMaxPrep(updates.maxPrep)
-    if (updates.maxCook !== undefined) setMaxCook(updates.maxCook)
-  }
-
   return (
-    <main className="pt-[72px] md:pt-[93px]">
-      {/* Hero Section */}
-      <section className="my-12 md:mt-16 md:mb-12 lg:mt-20 lg:mb-16">
-        <div className="text-left lg:text-center max-w-3xl lg:mx-auto">
-          <h1 className="text-preset-2 mb-3">
+    <div className="bg-canvas pt-28 lg:pt-32">
+      <section className="relative overflow-hidden px-4 pb-6 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 overflow-hidden" aria-hidden="true">
+          <div className="animate-aurora-a absolute -left-20 -top-24 h-80 w-80 rounded-full bg-mkt-glow/30 blur-3xl" />
+          <div className="animate-aurora-b absolute -right-16 top-0 h-72 w-72 rounded-full bg-mkt-sky/40 blur-3xl" />
+        </div>
+        <Reveal className="mx-auto max-w-3xl text-center">
+          <Eyebrow>The library</Eyebrow>
+          <h1 className="mt-5 text-balance text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
             Explore our simple, healthy recipes
           </h1>
-          <p>
-            Discover eight quick, whole-food dishes that fit real-life schedules
-            and taste amazing. Use the search bar to find a recipe by name or
-            ingredient, or simply scroll the list and let something delicious
-            catch your eye.
+          <p className="mt-4 text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
+            Search by name or ingredient, narrow by time and diet, and sort for the night you actually have.
           </p>
-        </div>
+        </Reveal>
       </section>
 
-      {/* Recipes Grid Section */}
-      <section className="lg:pb-24">
-        <RecipeFilters
-          filters={{ searchTerm, maxPrep, maxCook }}
-          onFilterChange={handleFilterChange}
-        />
-
-        <div
-          id="recipesGrid"
-          aria-live="polite"
-          className="grid gap-8 lg:grid-cols-2 xl:grid-cols-3"
-        >
-          <RecipeGrid recipes={filteredRecipes} loading={loading} />
-        </div>
+      <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
+        {error ? (
+          <ErrorMessage message={error} />
+        ) : (
+          <>
+            <div className="sticky top-24 z-20 mb-8">
+              <div className="rounded-3xl border border-white/80 bg-white/90 p-3 shadow-panel backdrop-blur-xl">
+                <RecipeFilters
+                  filters={{ searchTerm, maxPrep, maxCook, diets, sort }}
+                  onFilterChange={update}
+                  onClear={clear}
+                  hasFilters={hasFilters}
+                />
+              </div>
+            </div>
+            <p className="mb-5 text-sm font-semibold text-ink-muted" aria-live="polite">
+              {loading
+                ? 'Loading recipes…'
+                : `${filteredRecipes.length} of ${recipes.length} recipe${recipes.length === 1 ? '' : 's'}`}
+            </p>
+            {!loading && filteredRecipes.length === 0 ? (
+              <div className="rounded-3xl border border-dashed border-line bg-white px-6 py-16 text-center">
+                <p className="text-lg font-extrabold text-ink">Nothing matches those filters</p>
+                <p className="mt-2 text-sm text-ink-muted">Try a broader search, or clear the time and diet limits.</p>
+                {hasFilters && (
+                  <button type="button" className="btn mt-6" onClick={clear}>Clear filters</button>
+                )}
+              </div>
+            ) : (
+              <div id="recipesGrid" aria-live="polite" className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <RecipeGrid recipes={filteredRecipes} loading={loading} />
+              </div>
+            )}
+          </>
+        )}
       </section>
-    </main>
+    </div>
   )
 }
 
