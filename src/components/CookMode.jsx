@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 function CookMode({ recipe, servings, onClose, onCooked }) {
   const [step, setStep] = useState(0)
@@ -7,13 +8,18 @@ function CookMode({ recipe, servings, onClose, onCooked }) {
   const last = step === total - 1
 
   useEffect(() => {
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     const onKey = (event) => {
       if (event.key === 'Escape') onClose()
       if (event.key === 'ArrowRight') setStep((current) => Math.min(total - 1, current + 1))
       if (event.key === 'ArrowLeft') setStep((current) => Math.max(0, current - 1))
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previous
+      window.removeEventListener('keydown', onKey)
+    }
   }, [onClose, total])
 
   const finish = () => {
@@ -21,8 +27,8 @@ function CookMode({ recipe, servings, onClose, onCooked }) {
     setDone(true)
   }
 
-  return (
-    <div className="fixed inset-0 z-[70] flex flex-col bg-canvas" role="dialog" aria-modal="true" aria-labelledby="cook-title">
+  return createPortal(
+    <div className="fixed inset-0 z-[70] flex h-dvh flex-col bg-canvas" role="dialog" aria-modal="true" aria-labelledby="cook-title">
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-5">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-mkt-teal">Cook mode</p>
@@ -61,7 +67,8 @@ function CookMode({ recipe, servings, onClose, onCooked }) {
           </button>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
 
