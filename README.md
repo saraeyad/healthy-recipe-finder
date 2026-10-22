@@ -1,85 +1,112 @@
-# Project Structure
+# Healthy Recipe Finder
+
+A React app for finding whole-food recipes, scaling servings, cooking step by step, and planning a week of meals. Recipes live in `data.json`. Favorites, recent views, cooked history, and the weekly plan stay in the browser.
+
+Live site: [https://healthy-recipe-finder-ashy.vercel.app/](https://healthy-recipe-finder-ashy.vercel.app/)
+
+## What you can do
+
+- Search titles, overviews, and ingredients. Every word has to match.
+- Limit prep time and cook time, filter by diet, and sort by featured order, total time, prep time, or name.
+- Share a filtered list. Search, prep, cook, diet, and sort are stored in the URL (`q`, `prep`, `cook`, `diet`, `sort`).
+- Open a recipe, scale servings from 1 to 12, and keep mixed numbers and fractions.
+- Start cook mode, step through the instructions, and record that you cooked it.
+- Save recipes, see what you opened recently, and review cooked history.
+- Plan breakfast, lunch, and dinner for a Sunday-start week. Today follows the `Asia/Hebron` calendar.
+- Build one shopping list from the plan. The same ingredient and unit are merged, and checked items stay checked after a reload.
+
+Diet tags (vegetarian, vegan, gluten-free, protein-forward) are read from the ingredient list. They are a kitchen heuristic, not a lab analysis. Difficulty is Easy when the recipe is 15 minutes or less with at most four steps, Weeknight at 30 minutes or less, and Weekend after that.
+
+## Routes
+
+| Path | Page |
+| --- | --- |
+| `/` | Home, with scroll motion and a strip of your saved meals |
+| `/recipes` | Searchable recipe list |
+| `/recipe/:slug` | Recipe detail, servings, cook mode, and add to plan |
+| `/plan` | Weekly planner and shopping list |
+| `/saved` | Saved recipes, recently viewed, and cooked history |
+| `/about` | About the project |
+
+## Kitchen data
+
+`KitchenProvider` keeps this device’s kitchen in `localStorage` under `hrf.kitchen.v1`:
+
+- favorites
+- the last eight recipes you opened
+- up to forty cooked entries, each with servings and a time
+- the week plan, with servings clamped from 1 to 12
+- shopping-list checks
+
+Clearing site data for this origin resets the kitchen.
+
+## Scripts
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
+node --test src/utils/recipeLogic.test.js
+```
+
+The logic tests cover ingredient search, diet tags, sorting, quantity scaling, the merged shopping list, plan slots, and related recipes.
+
+## Stack
+
+React 18, Vite 5, Tailwind CSS 3.4, and React Router 6. The interface uses Inter, a teal canvas, and scroll motion. `prefers-reduced-motion` turns those animations off.
+
+## Project structure
 
 ```
+data.json                      # The eight recipes
 src/
-├── assets/              # Static assets (images)
-│   └── images/
-├── components/          # Reusable UI components
-│   ├── Breadcrumb.jsx
-│   ├── CTA.jsx
-│   ├── ErrorMessage.jsx
-│   ├── FilterDropdown.jsx
-│   ├── Footer.jsx
+├── App.jsx                    # Routes wrapped in KitchenProvider
+├── main.jsx
+├── index.css                  # Motion, type, and reduced-motion rules
+├── kitchen/
+│   └── KitchenContext.jsx     # Favorites, recent, cooked, plan, checks
+├── pages/
+│   ├── Home.jsx
+│   ├── Recipes.jsx
+│   ├── RecipeDetail.jsx
+│   ├── Planner.jsx
+│   ├── Saved.jsx
+│   └── About.jsx
+├── layout/
 │   ├── Header.jsx
-│   ├── LoadingState.jsx
 │   ├── Navigation.jsx
+│   ├── Footer.jsx
+│   └── MainLayout.jsx
+├── components/
 │   ├── RecipeCard.jsx
 │   ├── RecipeFilters.jsx
 │   ├── RecipeGrid.jsx
 │   ├── RecipeInfo.jsx
 │   ├── RecipeIngredients.jsx
-│   └── RecipeInstructions.jsx
-├── constants/           # Application constants
-│   ├── filterOptions.js
-│   └── navigation.js
-├── hooks/               # Custom React hooks
-│   ├── useClickOutside.js
-│   ├── useMenu.js
-│   ├── useRecipeFilters.js
-│   └── useRecipes.js
-├── pages/               # Page components
-│   ├── About.jsx
-│   ├── Home.jsx
-│   ├── RecipeDetail.jsx
-│   └── Recipes.jsx
-├── services/            # API/data services
-│   └── recipeService.js
-├── utils/               # Utility functions
-│   └── recipeFilters.js
-├── App.jsx              # Main app component
-├── main.jsx             # Entry point
-└── index.css            # Global styles
+│   ├── RecipeInstructions.jsx
+│   ├── SearchBar.jsx
+│   ├── FilterDropdown.jsx
+│   ├── ServingsControl.jsx
+│   ├── CookMode.jsx
+│   ├── AddToPlan.jsx
+│   ├── FavoriteButton.jsx
+│   ├── marketing/             # Home sections
+│   └── ui/                    # Buttons, eyebrow, reveal
+├── hooks/
+│   ├── useRecipes.js
+│   ├── useRecipeFilters.js    # Reads and writes the filter URL
+│   ├── useScrollHeader.js
+│   ├── useInView.js
+│   └── useParallax.js
+├── services/
+│   └── recipeService.js       # Loads data.json
+├── utils/
+│   ├── recipeLogic.js         # Search, diet, scale, plan, shopping list
+│   └── recipeLogic.test.js
+└── constants/
+    ├── navigation.js
+    └── filterOptions.js
 ```
-## Links 
-Live Site URL : [https://healthy-recipe-finder-ashy.vercel.app/]
 
-## Component Organization
-
-### Components (`src/components/`)
-- **Layout Components**: Header, Footer, Navigation
-- **Feature Components**: RecipeCard, RecipeFilters, RecipeGrid
-- **UI Components**: FilterDropdown, SearchBar, Breadcrumb
-- **State Components**: LoadingState, ErrorMessage
-- **Detail Components**: RecipeInfo, RecipeIngredients, RecipeInstructions
-
-### Hooks (`src/hooks/`)
-- `useRecipes` - Fetches and manages recipe data
-- `useRecipeFilters` - Manages filtering logic
-- `useMenu` - Handles mobile menu state
-- `useClickOutside` - Detects clicks outside elements
-
-### Services (`src/services/`)
-- `recipeService.js` - API calls and data fetching logic
-
-### Utils (`src/utils/`)
-- `recipeFilters.js` - Recipe filtering algorithms
-
-### Constants (`src/constants/`)
-- `filterOptions.js` - Filter dropdown options
-- `navigation.js` - Navigation links and routes
-
-## Benefits of This Structure
-
-1. **Separation of Concerns**: Logic, UI, and data are separated
-2. **Reusability**: Components and hooks can be reused across the app
-3. **Maintainability**: Easy to find and update specific functionality
-4. **Testability**: Isolated functions and components are easier to test
-5. **Scalability**: Easy to add new features without cluttering existing code
-
-## Key Principles
-
-- **Single Responsibility**: Each component/hook has one clear purpose
-- **DRY (Don't Repeat Yourself)**: Shared logic extracted to hooks/utils
-- **Composition**: Small components compose into larger features
-- **Consistency**: Similar patterns used throughout the codebase
-
+Recipe photos and icons live in `public/assets/images/`.
